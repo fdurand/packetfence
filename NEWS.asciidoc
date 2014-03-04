@@ -24,6 +24,7 @@ New Features
 * Support for Huawei AC6605
 * Support for Enterasys V2110
 * Inline layer 3 support
+* Filters for HTTP request on the portal
 
 Enhancements
 ++++++++++++
