@@ -50,7 +50,7 @@ our (
     @stored_config_files, @log_files,
     $mdm_config_file,
     $admin_roles_config_file,
-    $wrix_config_file,
+    $wrix_config_file, $apache_filters_config_file,
     $switches_overlay_file,
     $allowed_gaming_oui_file, $allowed_gaming_console_types_file,
     $cache_control_file,
@@ -84,7 +84,7 @@ BEGIN {
         $admin_roles_config_file
         $wrix_config_file
         @stored_config_files
-        $switches_overlay_file
+        $switches_overlay_file $apache_filters_config_file
         $allowed_gaming_oui_file $allowed_gaming_console_types_file
         $cache_control_file
         $log_conf_dir
@@ -128,6 +128,7 @@ $floating_devices_config_file = catfile($conf_dir, "floating_network_device.conf
 $wrix_config_file = catfile($conf_dir, "wrix.conf");
 $allowed_gaming_oui_file      = catfile($conf_dir,"allowed-gaming-oui.txt");
 $allowed_gaming_console_types_file = catfile($conf_dir,"allowed-gaming-console_types.txt");
+$apache_filters_config_file = catfile($conf_dir, "apache_filters.conf");
 
 @log_files = map {catfile($log_dir, $_)}
   qw( access_log error_log admin_access_log admin_error_log

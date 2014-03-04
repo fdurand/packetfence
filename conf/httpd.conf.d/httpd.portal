@@ -197,7 +197,6 @@ foreach my $interface (@internal_nets) {
          ErrorLog => $install_dir.'/logs/portal_error_log',
          CustomLog => $install_dir.'/logs/portal_access_log combined',
          Include => $var_dir.'/conf/captive-portal-common.conf',
-         Include => $var_dir.'/conf/block-unwanted.conf',
          Include => $var_dir.'/conf/captive-portal-cleanurls.conf',
     ));
     push (@{ $VirtualHost{$interface->{'Tip'}.":443"} }, gen_conf(
@@ -209,7 +208,6 @@ foreach my $interface (@internal_nets) {
          SSLProxyEngine    => 'on',
          Include => $var_dir.'/conf/ssl-certificates.conf',
          Include => $var_dir.'/conf/captive-portal-common.conf',
-         Include => $var_dir.'/conf/block-unwanted.conf',
          Include => $var_dir.'/conf/captive-portal-cleanurls.conf',
     ));
 }
@@ -232,7 +230,6 @@ if (defined($management_network->{'Tip'}) && $management_network->{'Tip'} ne '')
          ErrorLog            => $install_dir.'/logs/portal_error_log',
          CustomLog           => $install_dir.'/logs/portal_access_log combined',
          Include             => $var_dir.'/conf/captive-portal-common.conf',
-         Include             => $var_dir.'/conf/block-unwanted.conf',
          Include             => $var_dir.'/conf/captive-portal-cleanurls.conf',
     );
     push @{ $VirtualHost{$host.":443"} }, gen_conf(
@@ -243,7 +240,6 @@ if (defined($management_network->{'Tip'}) && $management_network->{'Tip'} ne '')
          SSLEngine           => 'on',
          Include             => $var_dir.'/conf/ssl-certificates.conf',
          Include             => $var_dir.'/conf/captive-portal-common.conf',
-         Include             => $var_dir.'/conf/block-unwanted.conf',
          Include             => $var_dir.'/conf/captive-portal-cleanurls.conf',
     );
 
