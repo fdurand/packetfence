@@ -10,7 +10,7 @@ dump add documentation
 
 =head1 SYNOPSIS
 
-dump.pl <config|floatingdevices|profiles_filters|profiles|sources|switch <id>|switches>
+dump.pl <config|floatingdevices|profiles_filters|profiles|sources|switch|switches <id>|vlanfilters>
 
 =head1 DESCRIPTION
 
@@ -43,6 +43,17 @@ sub _run {
     require pf::config;
     print Dumper(\%pf::config::ConfigFloatingDevices);
 }
+
+package pf::dump::vlanfilters;
+use base qw(pf::dump::cmd);
+use Data::Dumper;
+__PACKAGE__->mark_as_loaded();
+
+sub _run {
+    require pf::config;
+    print Dumper(\%pf::config::ConfigVlanFilters);
+}
+
 
 package pf::dump::profiles;
 use base qw(pf::dump::cmd);

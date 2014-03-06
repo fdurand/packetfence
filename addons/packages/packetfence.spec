@@ -236,6 +236,7 @@ Requires: perl(Linux::FD)
 Requires: perl(Linux::Inotify2)
 Requires: perl(File::Touch)
 Requires: perl(Hash::Merge)
+Requires: perl(Time::Period)
 # configuration-wizard
 Requires: iproute, vconfig
 #
