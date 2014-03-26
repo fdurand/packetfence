@@ -10,7 +10,7 @@ dump add documentation
 
 =head1 SYNOPSIS
 
-dump.pl <config|floatingdevices|profiles_filters|profiles|sources|switch <id>|switches>
+dump.pl <config|floatingdevices|firewallsso|profiles_filters|profiles|sources|switch <id>|switches>
 
 =head1 DESCRIPTION
 
@@ -109,6 +109,16 @@ __PACKAGE__->mark_as_loaded();
 sub _run {
     require pf::CHI;
     print Dumper(pf::CHI::chiConfigFromIniFile());
+}
+
+package pf::dump::firewallsso;
+use base qw(pf::dump::cmd);
+use Data::Dumper;
+__PACKAGE__->mark_as_loaded();
+
+sub _run {
+    require pf::config;
+    print Dumper(\%pf::config::ConfigFirewallSSO);
 }
 
 package main;
