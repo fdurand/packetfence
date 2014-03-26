@@ -55,6 +55,7 @@ our (
     $allowed_gaming_oui_file, $allowed_gaming_console_types_file,
     $cache_control_file,
     $log_conf_dir,
+    $vlan_filters_config_file,
 );
 
 BEGIN {
@@ -88,6 +89,7 @@ BEGIN {
         $allowed_gaming_oui_file $allowed_gaming_console_types_file
         $cache_control_file
         $log_conf_dir
+        $vlan_filters_config_file
     );
 }
 
@@ -128,6 +130,7 @@ $floating_devices_config_file = catfile($conf_dir, "floating_network_device.conf
 $wrix_config_file = catfile($conf_dir, "wrix.conf");
 $allowed_gaming_oui_file      = catfile($conf_dir,"allowed-gaming-oui.txt");
 $allowed_gaming_console_types_file = catfile($conf_dir,"allowed-gaming-console_types.txt");
+$vlan_filters_config_file = catfile($conf_dir, "vlan_filters.conf");
 
 @log_files = map {catfile($log_dir, $_)}
   qw( access_log error_log admin_access_log admin_error_log
@@ -143,7 +146,7 @@ $allowed_gaming_console_types_file = catfile($conf_dir,"allowed-gaming-console_t
     $oui_file, $floating_devices_file,
     $chi_config_file,$allowed_gaming_oui_file,$allowed_gaming_console_types_file,
     $ui_config_file,$mdm_config_file,$oauth_ip_file,$log_config_file,
-    $admin_roles_config_file,$wrix_config_file
+    $admin_roles_config_file,$wrix_config_file,$vlan_filters_config_file
 );
 
 $switches_overlay_file   = catfile($var_dir, "switches.conf");
