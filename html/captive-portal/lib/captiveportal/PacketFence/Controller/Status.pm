@@ -155,11 +155,27 @@ sub login : Local {
     my $request = $c->request;
     my $username = $request->param('username');
     my $password = $request->param('password');
-    $c->stash( 
+    my $auth_method = $request->param('auth_method') || 'password';
+
+    # Check if SAML source is available
+    my $profile = $c->profile;
+    my $saml_source = $profile->getSourceByType('SAML');
+
+    $c->stash(
         template => 'status/login.html',
         title => "Status - Login",
+        has_saml => defined($saml_source) ? 1 : 0,
     );
-    if ( all_defined( $username, $password ) ) {
+
+    if ( $auth_method eq 'saml' && defined($saml_source) ) {
+        # Handle SAML authentication
+        $c->forward(Authenticate => 'authenticationLogin');
+        if ( $c->has_errors ) {
+            $c->stash->{txt_auth_error} = join(' ', grep { ref ($_) eq '' } @{$c->error});
+            $c->clear_errors;
+        }
+    } elsif ( all_defined( $username, $password ) ) {
+        # Handle password-based authentication
         $c->forward(Authenticate => 'authenticationLogin');
         if ( $c->has_errors ) {
             $c->stash->{txt_auth_error} = join(' ', grep { ref ($_) eq '' } @{$c->error});
@@ -167,6 +183,58 @@ sub login : Local {
         } else {
             $c->response->redirect('/status');
         }
+    }
+}
+
+sub saml_assertion : Path('/status/saml/assertion') {
+    my ( $self, $c ) = @_;
+    my $request = $c->request;
+    my $saml_response = $request->param('SAMLResponse');
+
+    unless ($saml_response) {
+        $c->error("No SAML response received");
+        $c->response->redirect('/status/login');
+        return;
+    }
+
+    my $profile = $c->profile;
+    my $saml_source = $profile->getSourceByType('SAML');
+
+    unless ($saml_source) {
+        $c->error("SAML source not configured");
+        $c->response->redirect('/status/login');
+        return;
+    }
+
+    # Handle the SAML response
+    my ($username, $msg) = $saml_source->handle_response($saml_response);
+
+    # Strip username if needed
+    ($username, undef) = strip_username($username) if $username;
+
+    if ($username) {
+        # Authentication successful
+        pf::auth_log::record_auth($saml_source->id, $c->portalSession->clientMac, $username, $pf::auth_log::COMPLETED, $profile->name);
+
+        # Save login into session
+        $c->user_session->{username} = $username // $default_pid;
+        $c->user_session->{source_id} = $saml_source->id;
+        $c->user_session->{source_match} = $saml_source->id;
+
+        # Create person if doesn't exist
+        if(!person_exist($username)){
+            person_add($username);
+        }
+
+        # Log successful authentication
+        $c->log->info("Successfully authenticated via SAML: ".$username."/".$c->portalSession->clientIP->normalizedIP."/".$c->portalSession->clientMac);
+
+        $c->response->redirect('/status');
+    } else {
+        # Authentication failed
+        pf::auth_log::record_auth($saml_source->id, $c->portalSession->clientMac, '', $pf::auth_log::FAILED, $profile->name);
+        $c->error($msg || "SAML authentication failed");
+        $c->response->redirect('/status/login');
     }
 }
 

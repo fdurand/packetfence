@@ -131,7 +131,7 @@ Generate the Single-Sign-On URL that points to the Identity Provider
 =cut
 
 sub sso_url {
-    my ($self, $relayState) = @_;
+    my ($self, $relayState, $assertion_index) = @_;
 
     require pf::constants::saml;
     require Lasso;
@@ -148,6 +148,10 @@ sub sso_url {
         $lassoLogin->request->IsPassive(0);
         if($relayState) {
             $lassoLogin->msg_relayState($relayState);
+        }
+        # Set AssertionConsumerServiceIndex if specified (for status login)
+        if(defined($assertion_index)) {
+            $lassoLogin->request->AssertionConsumerServiceIndex($assertion_index);
         }
 
         $lassoLogin->build_authn_request_msg();

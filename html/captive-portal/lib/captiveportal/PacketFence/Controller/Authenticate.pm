@@ -81,6 +81,26 @@ sub authenticationLogin : Private {
     my ( $return, $message, $source_id, $extra );
     $logger->debug("authentication attempt");
 
+    # Check if SAML authentication is requested
+    my $auth_method = $request->param("auth_method") || 'password';
+    if ($auth_method eq 'saml') {
+        # Handle SAML authentication
+        my $saml_source = $profile->getSourceByType('SAML');
+        if (!$saml_source) {
+            $c->error("SAML authentication is not configured for this profile");
+            return;
+        }
+
+        $logger->debug("Initiating SAML authentication for status login");
+        pf::auth_log::record_oauth_attempt($saml_source->id, $mac, $profile->name);
+
+        # Generate the SSO URL and redirect
+        # Use assertion index 4 for status login callback (/status/saml/assertion)
+        my $sso_url = $saml_source->sso_url(undef, 4);
+        $c->response->redirect($sso_url);
+        $c->detach();
+    }
+
     if ($request->{'match'} eq "status/login") {
         my $person_info = pf::person::person_view($request->param("username"));
         if($person_info) {
@@ -115,8 +135,8 @@ sub authenticationLogin : Private {
     # validate login and password
     ( $return, $message, $source_id, $extra ) =
       pf::authentication::authenticate( {
-              'username' => $username, 
-              'password' => $password, 
+              'username' => $username,
+              'password' => $password,
               'rule_class' => $Rules::AUTH,
               'context' => $pf::constants::realm::PORTAL_CONTEXT,
           }, @{$sources} );
