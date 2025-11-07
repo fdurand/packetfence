@@ -4,7 +4,7 @@ use namespace::autoclean;
 use pf::util;
 use pf::constants;
 use pf::config;
-use pf::config qw(%ConfigSelfService);
+use pf::config qw(%ConfigSelfService %Config);
 use pf::node;
 use pf::person;
 use pf::web;
@@ -155,9 +155,10 @@ sub login : Local {
     my $request = $c->request;
     my $username = $request->param('username');
     my $password = $request->param('password');
-    $c->stash( 
+    $c->stash(
         template => 'status/login.html',
         title => "Status - Login",
+        self_reg_login => $Config{self_reg_login},
     );
     if ( all_defined( $username, $password ) ) {
         $c->forward(Authenticate => 'authenticationLogin');

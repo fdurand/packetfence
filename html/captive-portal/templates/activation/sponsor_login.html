@@ -17,6 +17,21 @@
       [% END %]
     </div>
 
+    [% IF self_reg_login.sso_status == 'enabled' %]
+    <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
+      <a href="[% self_reg_login.sso_login_path %]" class="c-btn c-btn--primary u-1/1">
+        [% i18n(self_reg_login.sso_login_text) %]
+      </a>
+    </div>
+    [% END %]
+
+    [% IF !self_reg_login.sso_status || self_reg_login.sso_status == 'disabled' || self_reg_login.allow_username_password == 'enabled' %]
+    [% IF self_reg_login.sso_status == 'enabled' %]
+    <div class="o-layout__item">
+      <p class="o-layout--center u-margin-top">-- [% i18n("or") %] --</p>
+    </div>
+    [% END %]
+
     <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
       [%# User / Pass %]
       <div class="input-container">
@@ -32,6 +47,7 @@
         <button type="submit" name="submit" class="c-btn c-btn--primary u-1/1">[% i18n("Login") %]</button>
       </div>
     </div>
+    [% END %]
 
   </div>
 </div>
