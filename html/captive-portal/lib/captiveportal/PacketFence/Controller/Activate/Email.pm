@@ -123,6 +123,7 @@ sub login : Private {
         title => "Guest Sponsor Login",
         template => $pf::web::guest::SPONSOR_LOGIN_TEMPLATE,
         username => $c->request->param_encoded("username"),
+        self_reg_login => $Config{self_reg_login},
     );
 }
 
