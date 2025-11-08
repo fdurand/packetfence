@@ -369,10 +369,22 @@ sub prompt_fields {
     $args //= {};
     my %saved_fields = %{$self->app->session->{saved_fields}} if (defined ($self->app->session->{saved_fields}) );
 
+    # Check if SSO is enabled and username/password is disabled
+    if ( isenabled($Config{self_reg_login}{sso_status}) &&
+         isdisabled($Config{self_reg_login}{allow_username_password}) ) {
+        # Redirect to SSO login path
+        $self->app->redirect($Config{self_reg_login}{sso_login_path});
+        return;
+    }
+
     if($self->with_aup && scalar(@{$self->required_fields}) == 1) {
         get_logger->debug("Only AUP is required, will not prompt for any fields");
         $args->{aup_only} = $TRUE;
     }
+
+    # Add SSO configuration and flag to template args
+    $args->{self_reg_login} = $Config{self_reg_login};
+    $args->{isSelfRegSSO} = isenabled($Config{self_reg_login}{sso_status});
 
     $self->render($self->signup_template, {
         source => $self->source,
