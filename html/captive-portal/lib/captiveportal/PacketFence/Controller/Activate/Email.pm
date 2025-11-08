@@ -115,6 +115,15 @@ sub code : Path : Args(2) {
 
 sub login : Private {
     my ( $self, $c ) = @_;
+
+    # Check if SSO is enabled and username/password is disabled
+    if ( isenabled($Config{self_reg_login}{sso_status}) &&
+         isdisabled($Config{self_reg_login}{allow_username_password}) ) {
+        # Redirect to SSO login path
+        $c->response->redirect($Config{self_reg_login}{sso_login_path});
+        $c->detach();
+    }
+
     if ( $c->has_errors ) {
         $c->stash->{txt_auth_error} = join(' ', grep { ref ($_) eq '' } @{$c->error});
         $c->clear_errors;
@@ -124,6 +133,7 @@ sub login : Private {
         template => $pf::web::guest::SPONSOR_LOGIN_TEMPLATE,
         username => $c->request->param_encoded("username"),
         self_reg_login => $Config{self_reg_login},
+        isSelfRegSSO => isenabled($Config{self_reg_login}{sso_status}),
     );
 }
 

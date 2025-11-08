@@ -155,10 +155,20 @@ sub login : Local {
     my $request = $c->request;
     my $username = $request->param('username');
     my $password = $request->param('password');
+
+    # Check if SSO is enabled and username/password is disabled
+    if ( isenabled($Config{self_reg_login}{sso_status}) &&
+         isdisabled($Config{self_reg_login}{allow_username_password}) ) {
+        # Redirect to SSO login path
+        $c->response->redirect($Config{self_reg_login}{sso_login_path});
+        $c->detach();
+    }
+
     $c->stash(
         template => 'status/login.html',
         title => "Status - Login",
         self_reg_login => $Config{self_reg_login},
+        isSelfRegSSO => isenabled($Config{self_reg_login}{sso_status}),
     );
     if ( all_defined( $username, $password ) ) {
         $c->forward(Authenticate => 'authenticationLogin');
