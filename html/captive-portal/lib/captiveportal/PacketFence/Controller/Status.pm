@@ -12,6 +12,7 @@ use pf::security_event qw(security_event_view_open);
 use pf::constants::security_event qw($LOST_OR_STOLEN);
 use pf::password qw(view);
 use pf::authentication;
+use pf::CHI;
 
 BEGIN { extends 'captiveportal::Base::Controller'; }
 
@@ -155,13 +156,23 @@ sub login : Local {
     my $request = $c->request;
     my $username = $request->param('username');
     my $password = $request->param('password');
+    my $token = $request->param('token');
 
-    # Check if SSO is enabled and username/password is disabled
-    if ( isenabled($Config{self_reg_login}{sso_status}) &&
-         isdisabled($Config{self_reg_login}{allow_username_password}) ) {
-        # Redirect to SSO login path
-        $c->response->redirect($Config{self_reg_login}{sso_login_path});
-        $c->detach();
+    # Handle SSO callback with token
+    if ( $token ) {
+        my $cache = pf::CHI->new(namespace => 'portalselfreg');
+        my $user_data = $cache->get($token);
+
+        if ( $user_data && ref($user_data) eq 'HASH' ) {
+            # Valid token, set user session
+            $c->user_session->{username} = $user_data->{pid} || $user_data->{username};
+            $cache->remove($token);  # Remove token after use
+            $c->response->redirect('/status');
+            $c->detach();
+        } else {
+            # Invalid or expired token
+            $c->stash->{txt_auth_error} = "SSO authentication failed or expired. Please try again.";
+        }
     }
 
     $c->stash(
@@ -170,6 +181,8 @@ sub login : Local {
         self_reg_login => $Config{self_reg_login},
         isSelfRegSSO => isenabled($Config{self_reg_login}{sso_status}),
     );
+
+    # Handle traditional username/password login
     if ( all_defined( $username, $password ) ) {
         $c->forward(Authenticate => 'authenticationLogin');
         if ( $c->has_errors ) {
