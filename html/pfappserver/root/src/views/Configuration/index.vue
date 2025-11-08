@@ -172,7 +172,12 @@ const setup = () => {
           ]
         },
         { name: i18n.t('Admin Access'), path: '/configuration/admin_roles' },
-        { name: i18n.t('Admin Login'), path: '/configuration/admin_login' },
+        { name: i18n.t('SSO Login'),
+          items: [
+            { name: i18n.t('Admin Login'), path: '/configuration/sso_login/admin_login' },
+            { name: i18n.t('Self Reg Login'), path: '/configuration/sso_login/self_reg_login' }
+          ]
+        },
         { name: i18n.t('DNS Configuration'), path: '/configuration/dns' },
         { name: i18n.t('FleetDM'), path: '/configuration/fleetdm', class: 'no-saas'},
         { name: i18n.t('Kafka'), path: '/configuration/kafka' },
