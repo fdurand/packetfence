@@ -155,8 +155,7 @@ sub login : Private {
         title => "Guest Sponsor Login",
         template => $pf::web::guest::SPONSOR_LOGIN_TEMPLATE,
         username => $c->request->param_encoded("username"),
-        self_reg_login => $Config{self_reg_login},
-        isSelfRegSSO => isenabled($Config{self_reg_login}{sso_status}),
+        sponsor_login => $Config{sponsor_login},
     );
 }
 

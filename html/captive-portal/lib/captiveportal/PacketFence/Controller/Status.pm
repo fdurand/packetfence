@@ -178,8 +178,7 @@ sub login : Local {
     $c->stash(
         template => 'status/login.html',
         title => "Status - Login",
-        self_reg_login => $Config{self_reg_login},
-        isSelfRegSSO => isenabled($Config{self_reg_login}{sso_status}),
+        status_login => $Config{status_login},
     );
 
     # Handle traditional username/password login

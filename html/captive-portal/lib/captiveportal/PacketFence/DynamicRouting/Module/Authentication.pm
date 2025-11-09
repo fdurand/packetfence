@@ -409,9 +409,8 @@ sub prompt_fields {
         $args->{aup_only} = $TRUE;
     }
 
-    # Add SSO configuration and flag to template args
+    # Add SSO configuration to template args
     $args->{self_reg_login} = $Config{self_reg_login};
-    $args->{isSelfRegSSO} = isenabled($Config{self_reg_login}{sso_status});
 
     $self->render($self->signup_template, {
         source => $self->source,
