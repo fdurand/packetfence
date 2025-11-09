@@ -10,7 +10,7 @@ const components = {
   TheForm
 }
 
-import { useViewResource, useViewResourceProps as props } from '../../_composables/useViewResource'
+import { useViewResource, useViewResourceProps as props } from '../../../_composables/useViewResource'
 
 import * as resource from '../_composables/useResource'
 const setup = (props, context) => useViewResource(resource, props, context)

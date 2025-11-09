@@ -1,4 +1,4 @@
-import { BaseViewResource } from '../../_components/new/'
+import { BaseViewResource } from '../../../_components/new/'
 import {
   BaseFormButtonBar,
   BaseFormGroupInput,
