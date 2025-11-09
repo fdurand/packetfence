@@ -38,7 +38,6 @@ import FormTypeMessage from './FormTypeMessage'
 import FormTypeProvisioning from './FormTypeProvisioning'
 import FormTypeRoot from './FormTypeRoot'
 import FormTypeRootSSO from './FormTypeRootSSO'
-import FormTypeSelfRegSSO from './FormTypeSelfRegSSO'
 import FormTypeSponsorSSO from './FormTypeSponsorSSO'
 import FormTypeStatusSSO from './FormTypeStatusSSO'
 import FormTypeSelectRole from './FormTypeSelectRole'
@@ -69,7 +68,6 @@ const components = {
   FormTypeProvisioning,
   FormTypeRoot,
   FormTypeRootSSO,
-  FormTypeSelfRegSSO,
   FormTypeSponsorSSO,
   FormTypeStatusSSO,
   FormTypeSelectRole,
@@ -147,9 +145,6 @@ export const setup = (props) => {
 
       case 'RootSSO':
         return FormTypeRootSSO // break
-
-      case 'SelfRegSSO':
-        return FormTypeSelfRegSSO // break
 
       case 'SponsorSSO':
         return FormTypeSponsorSSO // break

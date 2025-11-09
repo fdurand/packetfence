@@ -154,16 +154,9 @@ sub execute_actions {
 
     $self->SUPER::execute_actions();
 
-    #TO-DO , selfreg + auth = ok , selfreg + auth + mark_as_sponsor
-    #
-    if (($self->app->isRootSSO || $self->app->isSelfRegSSO || $self->app->isSponsorSSO || $self->app->isStatusSSO) and defined($self->new_node_info->{access_level})) {
+    # For SSO modules with access_level, bypass permission checks
+    if (($self->app->isRootSSO || $self->app->isSponsorSSO || $self->app->isStatusSSO) and defined($self->new_node_info->{access_level})) {
         get_logger->debug(sub { use Data::Dumper; "new_node_info after auth module actions : ".Dumper($self->new_node_info) });
-        return $TRUE;
-    }
-    # For SelfRegSSO without access_level, bypass the permission checks
-    if ($self->app->isSelfRegSSO) {
-        get_logger->debug(sub { use Data::Dumper; "SelfRegSSO mode - bypassing permission checks. new_node_info: ".Dumper($self->new_node_info) });
-        $self->app->session->{source} = $self->source;
         return $TRUE;
     }
     # For SponsorSSO, verify that mark_as_sponsor action is present

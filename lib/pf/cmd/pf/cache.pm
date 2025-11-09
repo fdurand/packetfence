@@ -21,7 +21,6 @@ Namespaces:
   ntlm_cache_username_lookup
   openvas_scans
   portaladmin
-  portalselfreg
   portalsponsor
   portalstatus
   person_lookup
