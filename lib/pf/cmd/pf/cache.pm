@@ -22,6 +22,8 @@ Namespaces:
   openvas_scans
   portaladmin
   portalselfreg
+  portalsponsor
+  portalstatus
   person_lookup
   pfdhcp_api
   pfdns

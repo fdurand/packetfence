@@ -58,6 +58,8 @@
           <b-dropdown-item :to="{ name: 'newPortalModule', params: { moduleType: 'Root' } }"><icon :style="{ color: 'black' }" class="mb-1" name="circle" scale=".5" /> Root</b-dropdown-item>
           <b-dropdown-item :to="{ name: 'newPortalModule', params: { moduleType: 'RootSSO' } }"><icon :style="{ color: 'black' }" class="mb-1" name="circle" scale=".5" /> RootSSO</b-dropdown-item>
           <b-dropdown-item :to="{ name: 'newPortalModule', params: { moduleType: 'SelfRegSSO' } }"><icon :style="{ color: 'black' }" class="mb-1" name="circle" scale=".5" /> SelfRegSSO</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'newPortalModule', params: { moduleType: 'SponsorSSO' } }"><icon :style="{ color: 'black' }" class="mb-1" name="circle" scale=".5" /> SponsorSSO</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'newPortalModule', params: { moduleType: 'StatusSSO' } }"><icon :style="{ color: 'black' }" class="mb-1" name="circle" scale=".5" /> StatusSSO</b-dropdown-item>
         </b-dropdown>
         <!--
         <b-button class="nav-item ml-3 mb-1" variant="outline-primary" :to="{ name: 'newPortalModule', params: { moduleType: 'Root' } }">{{ $t('New Root Module') }}</b-button>
@@ -162,7 +164,7 @@ const setup = (props, context) => {
   const isMutated = computed(() => JSON.stringify(items.value) !== JSON.stringify(mutableItems.value))
 
   const rootModules = computed(() => mutableItems.value
-    .filter(module => ['Root', 'RootSSO', 'SelfRegSSO'].includes(module.type))
+    .filter(module => ['Root', 'RootSSO', 'SelfRegSSO', 'SponsorSSO', 'StatusSSO'].includes(module.type))
     .sort((a, b) => (a.type === b.type) ? a.id.localeCompare(b.id) : a.type.localeCompare(b.type))
   )
   const activeModuleTypes = computed(() => {
