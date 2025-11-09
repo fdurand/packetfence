@@ -149,12 +149,12 @@ const actions = {
       throw err
     })
   },
-  getSelfRegLogin: ({ state, commit }) => {
-    if (state.cache['advanced']) {
-      return Promise.resolve(state.cache['self_reg_login']).then(cache => JSON.parse(JSON.stringify(cache)))
+  getSponsorLogin: ({ state, commit }) => {
+    if (state.cache['sponsor_login']) {
+      return Promise.resolve(state.cache['sponsor_login']).then(cache => JSON.parse(JSON.stringify(cache)))
     }
     commit('ITEM_REQUEST')
-    return api.base('self_reg_login').then(item => {
+    return api.base('sponsor_login').then(item => {
       commit('ITEM_REPLACED', item)
       return JSON.parse(JSON.stringify(item))
     }).catch((err) => {
@@ -162,9 +162,10 @@ const actions = {
       throw err
     })
   },
-  optionsSelfRegLogin: ({ commit }) => {
+
+  optionsSponsorLogin: ({ commit }) => {
     commit('ITEM_REQUEST')
-    return api.baseOptions('self_reg_login').then(response => {
+    return api.baseOptions('sponsor_login').then(response => {
       commit('ITEM_SUCCESS')
       return response
     }).catch((err) => {
@@ -172,9 +173,43 @@ const actions = {
       throw err
     })
   },
-  updateSelfRegLogin: ({ commit }, data) => {
+  updateSponsorLogin: ({ commit }, data) => {
     commit('ITEM_REQUEST')
-    data.id = 'self_reg_login'
+    data.id = 'sponsor_login'
+    return api.updateBase(data).then(response => {
+      commit('ITEM_REPLACED', data)
+      return response
+    }).catch(err => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  getStatusLogin: ({ state, commit }) => {
+    if (state.cache['status_login']) {
+      return Promise.resolve(state.cache['status_login']).then(cache => JSON.parse(JSON.stringify(cache)))
+    }
+    commit('ITEM_REQUEST')
+    return api.base('status_login').then(item => {
+      commit('ITEM_REPLACED', item)
+      return JSON.parse(JSON.stringify(item))
+    }).catch((err) => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  optionsStatusLogin: ({ commit }) => {
+    commit('ITEM_REQUEST')
+    return api.baseOptions('status_login').then(response => {
+      commit('ITEM_SUCCESS')
+      return response
+    }).catch((err) => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  updateStatusLogin: ({ commit }, data) => {
+    commit('ITEM_REQUEST')
+    data.id = 'status_login'
     return api.updateBase(data).then(response => {
       commit('ITEM_REPLACED', data)
       return response
