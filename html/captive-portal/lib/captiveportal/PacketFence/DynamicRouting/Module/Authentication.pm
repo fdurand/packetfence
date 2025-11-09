@@ -156,8 +156,14 @@ sub execute_actions {
 
     #TO-DO , selfreg + auth = ok , selfreg + auth + mark_as_sponsor
     #
-    if ($self->app->isRootSSO and defined($self->new_node_info->{access_level})) {
+    if (($self->app->isRootSSO || $self->app->isSelfRegSSO) and defined($self->new_node_info->{access_level})) {
         get_logger->debug(sub { use Data::Dumper; "new_node_info after auth module actions : ".Dumper($self->new_node_info) });
+        return $TRUE;
+    }
+    # For SelfRegSSO without access_level, bypass the permission checks
+    if ($self->app->isSelfRegSSO) {
+        get_logger->debug(sub { use Data::Dumper; "SelfRegSSO mode - bypassing permission checks. new_node_info: ".Dumper($self->new_node_info) });
+        $self->app->session->{source} = $self->source;
         return $TRUE;
     }
     unless(
