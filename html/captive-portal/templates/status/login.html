@@ -12,18 +12,18 @@
     </div>
     [% END %]
 
-    [% IF self_reg_login.sso_status == 'enabled' %]
+    [% IF status_login.sso_status == 'enabled' %]
     <div class="o-layout o-layout--center">
       <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-        <a href="[% self_reg_login.sso_login_path %]" class="c-btn c-btn--primary u-1/1">
-          [% i18n(self_reg_login.sso_login_text) %]
+        <a href="[% status_login.sso_login_path %]" class="c-btn c-btn--primary u-1/1">
+          [% i18n(status_login.sso_login_text) %]
         </a>
       </div>
     </div>
     [% END %]
 
-    [% IF !self_reg_login.sso_status || self_reg_login.sso_status == 'disabled' || self_reg_login.allow_username_password == 'enabled' %]
-    [% IF self_reg_login.sso_status == 'enabled' %]
+    [% IF !status_login.sso_status || status_login.sso_status == 'disabled' || status_login.allow_username_password == 'enabled' %]
+    [% IF status_login.sso_status == 'enabled' %]
     <div class="o-layout--center u-margin-top u-margin-bottom">
       <div class="o-layout__item">
         <p class="text-center">-- [% i18n("or") %] --</p>
