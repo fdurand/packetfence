@@ -149,6 +149,74 @@ const actions = {
       throw err
     })
   },
+  getSponsorLogin: ({ state, commit }) => {
+    if (state.cache['sponsor_login']) {
+      return Promise.resolve(state.cache['sponsor_login']).then(cache => JSON.parse(JSON.stringify(cache)))
+    }
+    commit('ITEM_REQUEST')
+    return api.base('sponsor_login').then(item => {
+      commit('ITEM_REPLACED', item)
+      return JSON.parse(JSON.stringify(item))
+    }).catch((err) => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  optionsSponsorLogin: ({ commit }) => {
+    commit('ITEM_REQUEST')
+    return api.baseOptions('sponsor_login').then(response => {
+      commit('ITEM_SUCCESS')
+      return response
+    }).catch((err) => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  updateSponsorLogin: ({ commit }, data) => {
+    commit('ITEM_REQUEST')
+    data.id = 'sponsor_login'
+    return api.updateBase(data).then(response => {
+      commit('ITEM_REPLACED', data)
+      return response
+    }).catch(err => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  getStatusLogin: ({ state, commit }) => {
+    if (state.cache['status_login']) {
+      return Promise.resolve(state.cache['status_login']).then(cache => JSON.parse(JSON.stringify(cache)))
+    }
+    commit('ITEM_REQUEST')
+    return api.base('status_login').then(item => {
+      commit('ITEM_REPLACED', item)
+      return JSON.parse(JSON.stringify(item))
+    }).catch((err) => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  optionsStatusLogin: ({ commit }) => {
+    commit('ITEM_REQUEST')
+    return api.baseOptions('status_login').then(response => {
+      commit('ITEM_SUCCESS')
+      return response
+    }).catch((err) => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
+  updateStatusLogin: ({ commit }, data) => {
+    commit('ITEM_REQUEST')
+    data.id = 'status_login'
+    return api.updateBase(data).then(response => {
+      commit('ITEM_REPLACED', data)
+      return response
+    }).catch(err => {
+      commit('ITEM_ERROR', err.response)
+      throw err
+    })
+  },
   getAdvanced: ({ state, commit }) => {
     if (state.cache['advanced']) {
       return Promise.resolve(state.cache['advanced']).then(cache => JSON.parse(JSON.stringify(cache)))
