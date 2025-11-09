@@ -193,7 +193,7 @@ Validate that we have a valid MAC address
 
 sub validate_mac {
     my ($self) = @_;
-    if(!valid_mac($self->current_mac) && !$self->app->preregistration){
+    if(!valid_mac($self->current_mac) && !$self->app->preregistration && !$self->app->isSelfRegSSO){
         $self->app->error("error: not found in the database");
         return $FALSE;
     }
