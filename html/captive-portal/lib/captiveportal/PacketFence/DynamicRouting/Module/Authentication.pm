@@ -409,9 +409,6 @@ sub prompt_fields {
         $args->{aup_only} = $TRUE;
     }
 
-    # Add SSO configuration to template args
-    $args->{self_reg_login} = $Config{self_reg_login};
-
     $self->render($self->signup_template, {
         source => $self->source,
         previous_request => $self->app->request->parameters(),
