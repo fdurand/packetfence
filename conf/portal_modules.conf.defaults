@@ -63,7 +63,12 @@ description=Default admin SSO policy
 type=RootSSO
 modules=default_registration_policy,default_mfa_policy
 
-[default_self_reg_sso_policy]
-description=Default self registration SSO policy
-type=SelfRegSSO
+[default_sponsor_sso_policy]
+description=Default sponsor SSO policy
+type=SponsorSSO
+modules=default_registration_policy,default_mfa_policy
+
+[default_status_sso_policy]
+description=Default status SSO policy
+type=StatusSSO
 modules=default_registration_policy,default_mfa_policy

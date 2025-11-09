@@ -35,13 +35,14 @@ use pf::activation;
 use fingerbank::Config;
 use captiveportal::DynamicRouting::Module::Root;
 use captiveportal::DynamicRouting::Module::RootSSO;
-use captiveportal::DynamicRouting::Module::SelfRegSSO;
+use captiveportal::DynamicRouting::Module::SponsorSSO;
+use captiveportal::DynamicRouting::Module::StatusSSO;
 
 has 'session' => (is => 'rw', required => 1);
 
 has 'user_session' => (is => 'rw', required => 1);
 
-has 'root_module' => (is => 'rw', isa => "captiveportal::DynamicRouting::Module::Root|captiveportal::DynamicRouting::Module::RootSSO|captiveportal::DynamicRouting::Module::SelfRegSSO");
+has 'root_module' => (is => 'rw', isa => "captiveportal::DynamicRouting::Module::Root|captiveportal::DynamicRouting::Module::RootSSO|captiveportal::DynamicRouting::Module::SponsorSSO|captiveportal::DynamicRouting::Module::StatusSSO");
 
 has 'root_module_id' => (is => 'rw');
 
@@ -379,7 +380,8 @@ sub render {
 
     my $layout_args = {
         isRootSSO => $self->isRootSSO,
-        isSelfRegSSO => $self->isSelfRegSSO,
+        isSponsorSSO => $self->isSponsorSSO,
+        isStatusSSO => $self->isStatusSSO,
         flash => $self->flash,
         content => $inner_content,
         client_mac => $self->current_mac,
@@ -603,16 +605,28 @@ sub isRootSSO {
     return defined $root_module && $root_module->isa("captiveportal::DynamicRouting::Module::RootSSO")
 }
 
-=head2 isSelfRegSSO
+=head2 isSponsorSSO
 
-return $TRUE if the root module ia a SelfRegSSO
+return $TRUE if the root module is a SponsorSSO
 
 =cut
 
-sub isSelfRegSSO {
+sub isSponsorSSO {
     my ($self) = @_;
     my $root_module = $self->root_module;
-    return defined $root_module && $root_module->isa("captiveportal::DynamicRouting::Module::SelfRegSSO")
+    return defined $root_module && $root_module->isa("captiveportal::DynamicRouting::Module::SponsorSSO")
+}
+
+=head2 isStatusSSO
+
+return $TRUE if the root module is a StatusSSO
+
+=cut
+
+sub isStatusSSO {
+    my ($self) = @_;
+    my $root_module = $self->root_module;
+    return defined $root_module && $root_module->isa("captiveportal::DynamicRouting::Module::StatusSSO")
 }
 
 

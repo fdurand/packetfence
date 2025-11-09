@@ -1,12 +1,12 @@
-package captiveportal::PacketFence::DynamicRouting::Module::SelfRegSSO;
+package captiveportal::PacketFence::DynamicRouting::Module::SponsorSSO;
 
 =head1 NAME
 
-DynamicRouting::RootModule
+DynamicRouting::SponsorSSO
 
 =head1 DESCRIPTION
 
-Root module for Dynamic Routing
+Sponsor SSO module for Dynamic Routing - handles SSO authentication for sponsor page validation
 
 =cut
 
@@ -28,7 +28,7 @@ use pf::CHI;
 use pf::constants qw($TRUE);
 use Bytes::Random::Secure;
 
-sub cache { return pf::CHI->new(namespace => 'portalselfreg'); }
+sub cache { return pf::CHI->new(namespace => 'portalsponsor'); }
 
 has '+parent' => (required => 0);
 
@@ -70,7 +70,7 @@ Reevaluate the access of the user and show the release page
 
 sub release {
     my ($self) = @_;
-    return $self->app->redirect($self->app->session->{callback}."?token=".$self->{self_reg_session_token});
+    return $self->app->redirect($self->app->session->{callback}."?token=".$self->{sponsor_session_token});
 }
 
 =head2 execute_child
@@ -102,7 +102,7 @@ sub execute_actions {
         );
     my $token = unpack("H*", $rand->bytes(32));
     cache->set($token, $self->new_node_info);
-    $self->{self_reg_session_token} = $token;
+    $self->{sponsor_session_token} = $token;
     return $TRUE;
 }
 
@@ -136,4 +136,3 @@ USA.
 __PACKAGE__->meta->make_immutable unless $ENV{"PF_SKIP_MAKE_IMMUTABLE"};
 
 1;
-

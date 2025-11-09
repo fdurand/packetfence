@@ -1,12 +1,12 @@
-package pfappserver::Form::Config::PortalModule::SelfRegSSO;
+package pfappserver::Form::Config::PortalModule::SponsorSSO;
 
 =head1 NAME
 
-pfappserver::Form::Config::PortalModule:SelfRegSSO
+pfappserver::Form::Config::PortalModule:SponsorSSO
 
 =head1 DESCRIPTION
 
-Form definition to create or update a root portal module based on session.
+Form definition to create or update a sponsor SSO portal module.
 
 =cut
 
@@ -14,8 +14,8 @@ use HTML::FormHandler::Moose;
 extends 'pfappserver::Form::Config::PortalModule::Chained';
 with 'pfappserver::Base::Form::Role::Help';
 
-use captiveportal::DynamicRouting::Module::SelfRegSSO;
-sub for_module {'captiveportal::PacketFence::DynamicRouting::Module::SelfRegSSO'}
+use captiveportal::DynamicRouting::Module::SponsorSSO;
+sub for_module {'captiveportal::PacketFence::DynamicRouting::Module::SponsorSSO'}
 
 ## Definition
 
@@ -53,5 +53,3 @@ USA.
 
 __PACKAGE__->meta->make_immutable unless $ENV{"PF_SKIP_MAKE_IMMUTABLE"};
 1;
-
-

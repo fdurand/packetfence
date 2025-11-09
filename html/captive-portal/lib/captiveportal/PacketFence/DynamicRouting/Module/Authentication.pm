@@ -154,15 +154,41 @@ sub execute_actions {
 
     $self->SUPER::execute_actions();
 
-    #TO-DO , selfreg + auth = ok , selfreg + auth + mark_as_sponsor
-    #
-    if (($self->app->isRootSSO || $self->app->isSelfRegSSO) and defined($self->new_node_info->{access_level})) {
+    # For SSO modules with access_level, bypass permission checks
+    if (($self->app->isRootSSO || $self->app->isSponsorSSO || $self->app->isStatusSSO) and defined($self->new_node_info->{access_level})) {
         get_logger->debug(sub { use Data::Dumper; "new_node_info after auth module actions : ".Dumper($self->new_node_info) });
         return $TRUE;
     }
-    # For SelfRegSSO without access_level, bypass the permission checks
-    if ($self->app->isSelfRegSSO) {
-        get_logger->debug(sub { use Data::Dumper; "SelfRegSSO mode - bypassing permission checks. new_node_info: ".Dumper($self->new_node_info) });
+    # For SponsorSSO, verify that mark_as_sponsor action is present
+    if ($self->app->isSponsorSSO) {
+        get_logger->debug(sub { use Data::Dumper; "SponsorSSO mode - checking for mark_as_sponsor action. new_node_info: ".Dumper($self->new_node_info) });
+        # Check if mark_as_sponsor action is present in the actions
+        my $has_sponsor_action = 0;
+        if (defined($self->actions) && ref($self->actions) eq 'ARRAY') {
+            foreach my $action (@{$self->actions}) {
+                if (ref($action) eq 'HASH' && $action->{type} && $action->{type} eq 'mark_as_sponsor') {
+                    $has_sponsor_action = 1;
+                    last;
+                }
+            }
+        }
+        if (!$has_sponsor_action) {
+            $self->app->flash->{error} = "Sponsor authentication requires mark_as_sponsor action";
+            get_logger->warn("SponsorSSO authentication failed: mark_as_sponsor action not found");
+            return $FALSE;
+        }
+        $self->app->session->{source} = $self->source;
+        return $TRUE;
+    }
+    # For StatusSSO, check that authentication passed (verify category)
+    if ($self->app->isStatusSSO) {
+        get_logger->debug(sub { use Data::Dumper; "StatusSSO mode - checking authentication. new_node_info: ".Dumper($self->new_node_info) });
+        # Check if category is defined and not rejected
+        if (!defined($self->new_node_info->{category}) || $self->new_node_info->{category} eq $REJECT_ROLE) {
+            $self->app->flash->{error} = "Status page authentication requires valid category";
+            get_logger->warn("StatusSSO authentication failed: invalid or missing category");
+            return $FALSE;
+        }
         $self->app->session->{source} = $self->source;
         return $TRUE;
     }

@@ -39,11 +39,10 @@ import { useForm as setup, useFormProps as props } from '../_composables/useForm
 
 // @vue/component
 export default {
-  name: 'form-type-self-reg-sso',
+  name: 'form-type-sponsor-sso',
   inheritAttrs: false,
   components,
   props,
   setup
 }
 </script>
-

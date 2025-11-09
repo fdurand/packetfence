@@ -222,14 +222,26 @@ expires_in=5s
 storage=distributed
 expires_in=10d
 
-[namespace portalselfreg]
+[namespace portalsponsor]
 #
-# namespace portalselfreg.storage
+# namespace portalsponsor.storage
 #
 # The storage to use for the namespace
 storage=distributed
 #
-# storage portalselfreg.expires_in
+# storage portalsponsor.expires_in
+#
+# Amount of time from the current time to expire an entry
+expires_in=120s
+
+[namespace portalstatus]
+#
+# namespace portalstatus.storage
+#
+# The storage to use for the namespace
+storage=distributed
+#
+# storage portalstatus.expires_in
 #
 # Amount of time from the current time to expire an entry
 expires_in=120s
