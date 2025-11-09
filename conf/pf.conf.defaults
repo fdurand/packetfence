@@ -1555,3 +1555,17 @@ token=
 [pfdns_connector]
 pfdns_connector_server=[% ENV.env_or_default("PFDNS_CONNECTOR_HOST_PORT", "%mgmtip%:5353") %]
 
+[sponsor_login]
+sso_status=disabled
+sso_base_url=
+sso_login_path=/sponsor-sso
+sso_authorize_path=/portaltoken
+sso_login_text=Single Sign On
+
+[status_login]
+sso_status=disabled
+sso_base_url=
+sso_login_path=/status-sso
+sso_authorize_path=/portaltoken
+sso_login_text=Single Sign On
+
