@@ -1546,6 +1546,22 @@ sso_authorize_path=/portaltoken
 sso_login_text=Single Sign On
 allow_username_password=enabled
 
+[sponsor_login]
+sso_status=disabled
+sso_base_url=
+sso_login_path=/sponsor-sso
+sso_authorize_path=/portaltoken
+sso_login_text=Single Sign On
+allow_username_password=enabled
+
+[status_login]
+sso_status=disabled
+sso_base_url=
+sso_login_path=/status-sso
+sso_authorize_path=/portaltoken
+sso_login_text=Single Sign On
+allow_username_password=enabled
+
 [fleetdm]
 host=
 email=
