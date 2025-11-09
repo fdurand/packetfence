@@ -162,6 +162,7 @@ const actions = {
       throw err
     })
   },
+
   optionsSponsorLogin: ({ commit }) => {
     commit('ITEM_REQUEST')
     return api.baseOptions('sponsor_login').then(response => {

@@ -43,7 +43,7 @@ has 'with_aup' => ('is' => 'rw', default => sub {1});
 
 has 'aup_template' => (is => 'rw', default => sub {'aup_text.html'});
 
-has '+actions' => (default => sub {{ "set_access_level" => [], "trigger_portal_mfa" => [], "on_success" => [], "on_failure" => [], "destination_url" => [], "role_from_source" => [], "unregdate_from_source" => [], "time_balance_from_source" => [], "bandwidth_balance_from_source" => [], "unregdate_from_sponsor_source" => []}});
+has '+actions' => (default => sub {{ "mark_as_sponsor" => [], "set_access_level" => [], "trigger_portal_mfa" => [], "on_success" => [], "on_failure" => [], "destination_url" => [], "role_from_source" => [], "unregdate_from_source" => [], "time_balance_from_source" => [], "bandwidth_balance_from_source" => [], "unregdate_from_sponsor_source" => []}});
 
 has 'signup_template' => ('is' => 'rw', default => sub {'signin.html'});
 
@@ -72,6 +72,7 @@ sub available_actions {
         'unregdate_from_sponsor_source',
         'trigger_portal_mfa',
         'set_access_level',
+        'mark_as_sponsor'
     ];
 }
 
@@ -153,8 +154,42 @@ sub execute_actions {
 
     $self->SUPER::execute_actions();
 
-    if ($self->app->isRootSSO and defined($self->new_node_info->{access_level})) {
+    # For SSO modules with access_level, bypass permission checks
+    if (($self->app->isRootSSO || $self->app->isSponsorSSO || $self->app->isStatusSSO) and defined($self->new_node_info->{access_level})) {
         get_logger->debug(sub { use Data::Dumper; "new_node_info after auth module actions : ".Dumper($self->new_node_info) });
+        return $TRUE;
+    }
+    # For SponsorSSO, verify that mark_as_sponsor action is present
+    if ($self->app->isSponsorSSO) {
+        get_logger->debug(sub { use Data::Dumper; "SponsorSSO mode - checking for mark_as_sponsor action. new_node_info: ".Dumper($self->new_node_info) });
+        # Check if mark_as_sponsor action is present in the actions
+        my $has_sponsor_action = 0;
+        if (defined($self->actions) && ref($self->actions) eq 'ARRAY') {
+            foreach my $action (@{$self->actions}) {
+                if (ref($action) eq 'HASH' && $action->{type} && $action->{type} eq 'mark_as_sponsor') {
+                    $has_sponsor_action = 1;
+                    last;
+                }
+            }
+        }
+        if (!$has_sponsor_action) {
+            $self->app->flash->{error} = "Sponsor authentication requires mark_as_sponsor action";
+            get_logger->warn("SponsorSSO authentication failed: mark_as_sponsor action not found");
+            return $FALSE;
+        }
+        $self->app->session->{source} = $self->source;
+        return $TRUE;
+    }
+    # For StatusSSO, check that authentication passed (verify category)
+    if ($self->app->isStatusSSO) {
+        get_logger->debug(sub { use Data::Dumper; "StatusSSO mode - checking authentication. new_node_info: ".Dumper($self->new_node_info) });
+        # Check if category is defined and not rejected
+        if (!defined($self->new_node_info->{category}) || $self->new_node_info->{category} eq $REJECT_ROLE) {
+            $self->app->flash->{error} = "Status page authentication requires valid category";
+            get_logger->warn("StatusSSO authentication failed: invalid or missing category");
+            return $FALSE;
+        }
+        $self->app->session->{source} = $self->source;
         return $TRUE;
     }
     unless(
@@ -373,6 +408,9 @@ sub prompt_fields {
         get_logger->debug("Only AUP is required, will not prompt for any fields");
         $args->{aup_only} = $TRUE;
     }
+
+    # Add SSO configuration to template args
+    $args->{self_reg_login} = $Config{self_reg_login};
 
     $self->render($self->signup_template, {
         source => $self->source,
