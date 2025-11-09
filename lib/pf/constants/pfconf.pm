@@ -14,6 +14,7 @@ use strict;
 use warnings;
 our %ALLOWED_SECTIONS = (
     active_active                 => undef,
+    admin_login                   => undef,
     advanced                      => undef,
     alerting                      => undef,
     captive_portal                => undef,
@@ -30,6 +31,8 @@ our %ALLOWED_SECTIONS = (
     provisioning                  => undef,
     services                      => undef,
     snmp_traps                    => undef,
+    sponsor_login                 => undef,
+    status_login                  => undef,
     webservices                   => undef,
     guests_admin_registration     => undef,
     radius_authentication_methods => undef,
