@@ -19,23 +19,10 @@
 
     [% IF sponsor_login.sso_status == 'enabled' %]
     <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-      <a href="[% sponsor_login.sso_login_path %]" id="sponsor-sso-login-link" class="c-btn c-btn--primary u-1/1">
+      <a href="#" data-sso-path="[% sponsor_login.sso_login_path %]" id="sponsor-sso-login-link" class="c-btn c-btn--primary u-1/1">
         [% i18n(sponsor_login.sso_login_text) %]
       </a>
     </div>
-    <script>
-      (function() {
-        var ssoLink = document.getElementById('sponsor-sso-login-link');
-        if (ssoLink) {
-          ssoLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            var basePath = '[% sponsor_login.sso_login_path %]';
-            var callback = encodeURIComponent(window.location.href);
-            window.location.href = basePath + '?callback=' + callback;
-          });
-        }
-      })();
-    </script>
     [% END %]
 
     [% IF !sponsor_login.sso_status || sponsor_login.sso_status == 'disabled' || sponsor_login.allow_username_password == 'enabled' %]
@@ -66,5 +53,18 @@
 </div>
 
 </form>
+<script>
+  (function() {
+    var ssoLink = document.getElementById('sponsor-sso-login-link');
+    if (ssoLink) {
+      ssoLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        var basePath = ssoLink.getAttribute('data-sso-path');
+        var callback = encodeURIComponent(window.location.href);
+        window.location.href = basePath + '?callback=' + callback;
+      });
+    }
+  })();
+</script>
 
 [% INCLUDE 'password-button.inc' %]

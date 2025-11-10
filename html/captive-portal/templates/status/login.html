@@ -15,24 +15,11 @@
     [% IF status_login.sso_status == 'enabled' %]
     <div class="o-layout o-layout--center">
       <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-        <a href="[% status_login.sso_login_path %]" id="sso-login-link" class="c-btn c-btn--primary u-1/1">
+        <a href="#" data-sso-path="[% status_login.sso_login_path %]" id="sso-login-link" class="c-btn c-btn--primary u-1/1">
           [% i18n(status_login.sso_login_text) %]
         </a>
       </div>
     </div>
-    <script>
-      (function() {
-        var ssoLink = document.getElementById('sso-login-link');
-        if (ssoLink) {
-          ssoLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            var basePath = '[% status_login.sso_login_path %]';
-            var callback = encodeURIComponent(window.location.href);
-            window.location.href = basePath + '?callback=' + callback;
-          });
-        }
-      })();
-    </script>
     [% END %]
 
     [% IF !status_login.sso_status || status_login.sso_status == 'disabled' || status_login.allow_username_password == 'enabled' %]
@@ -67,4 +54,17 @@
     [% END %]
   </form>
 </div>
+<script>
+  (function() {
+    var ssoLink = document.getElementById('sso-login-link');
+    if (ssoLink) {
+      ssoLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        var basePath = ssoLink.getAttribute('data-sso-path');
+        var callback = encodeURIComponent(window.location.href);
+        window.location.href = basePath + '?callback=' + callback;
+      });
+    }
+  })();
+</script>
 [% INCLUDE 'password-button.inc' %]
