@@ -19,7 +19,7 @@
 
     [% IF self_reg_login.sso_status == 'enabled' %]
     <div class="o-layout__item u-1/1 u-2/3@tablet u-3/5@desktop">
-      <a href="[% self_reg_login.sso_login_path %]" class="c-btn c-btn--primary u-1/1">
+      <a href="[% self_reg_login.sso_login_path %]?callback=[% c.req.uri | uri %]" class="c-btn c-btn--primary u-1/1">
         [% i18n(self_reg_login.sso_login_text) %]
       </a>
     </div>
