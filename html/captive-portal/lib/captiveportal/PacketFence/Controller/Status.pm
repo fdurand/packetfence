@@ -160,7 +160,7 @@ sub login : Local {
 
     # Handle SSO callback with token
     if ( $token ) {
-        my $cache = pf::CHI->new(namespace => 'portalselfreg');
+        my $cache = pf::CHI->new(namespace => 'portalstatus');
         my $user_data = $cache->get($token);
 
         if ( $user_data && ref($user_data) eq 'HASH' ) {

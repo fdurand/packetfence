@@ -155,7 +155,7 @@ sub execute_actions {
     $self->SUPER::execute_actions();
 
     # For SSO modules with access_level, bypass permission checks
-    if (($self->app->isRootSSO || $self->app->isSponsorSSO || $self->app->isStatusSSO) and defined($self->new_node_info->{access_level})) {
+    if ($self->app->isRootSSO and defined($self->new_node_info->{access_level})) {
         get_logger->debug(sub { use Data::Dumper; "new_node_info after auth module actions : ".Dumper($self->new_node_info) });
         return $TRUE;
     }
