@@ -18,7 +18,20 @@ Catalyst Controller.
 
 =cut
 
-sub cache { return pf::CHI->new(namespace => 'portaladmin'); }
+sub cache {
+    my ($self, $c) = @_;
+    my $namespace;
+    if ($c->isRootSSO) {
+        $namespace = 'portaladmin';
+    } elsif ($c->isSponsorSSO) {
+        $namespace = 'portalsponsor';
+    } elsif ($c->isStatusSSO) {
+        $namespace = 'portalstatus';
+    } else {
+        $namespace = 'portaladmin'; # default fallback
+    }
+    return pf::CHI->new(namespace => $namespace);
+}
 
 =head2 index
 
@@ -28,7 +41,7 @@ sub index : Path : Args(0) {
     my ( $self, $c ) = @_;
     my $actions;
     if (my $uuid = $c->request->param('token')) {
-        $actions = cache->get($uuid);
+        $actions = $self->cache($c)->get($uuid);
         if (!defined($actions)) {
             $c->response->status(404);
             $c->response->body('{ "access_level" => "none" }');
