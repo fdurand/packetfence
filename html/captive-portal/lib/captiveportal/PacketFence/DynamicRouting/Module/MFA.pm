@@ -116,7 +116,7 @@ sub execute_child {
         }
     }
     else {
-        my $relayState = $self->app->isRootSSO ? $self->app->request->cookie("CGISESSION")->value : undef;
+        my $relayState = ($self->app->isRootSSO || $self->app->isSponsorSSO || $self->app->isStatusSSO) ? $self->app->request->cookie("CGISESSION")->value : undef;
         my $info = $mfa->redirect_info($self->username, $self->app->session->{'captiveportal::Model::Portal::Session'}->{'dispatcherSession'}->{'_session_id'}, $relayState);
         $self->show_mfa($info);
     }

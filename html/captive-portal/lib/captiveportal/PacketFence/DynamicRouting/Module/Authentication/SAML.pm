@@ -78,7 +78,7 @@ sub redirect {
     my ($self) = @_;
     if(!$self->with_aup || $self->request_fields->{aup}){
         pf::auth_log::record_oauth_attempt($self->source->id, $self->current_mac, $self->app->profile->name);
-        my $relayState = $self->app->isRootSSO ? $self->app->request->cookie("CGISESSION")->value : undef;
+        my $relayState = ($self->app->isRootSSO || $self->app->isSponsorSSO || $self->app->isStatusSSO) ? $self->app->request->cookie("CGISESSION")->value : undef;
         $self->app->redirect($self->source->sso_url($relayState));
     }
     else {
