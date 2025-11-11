@@ -116,37 +116,6 @@ sub code : Path : Args(2) {
 
 sub login : Private {
     my ( $self, $c ) = @_;
-    my $request = $c->request;
-    my $token = $request->param('token');
-
-    # Handle SSO callback with token
-    if ( $token ) {
-        my $cache = pf::CHI->new(namespace => 'portalsponsor');
-        my $user_data = $cache->get($token);
-
-        if ( $user_data && ref($user_data) eq 'HASH' ) {
-            my $username = $user_data->{pid} || $user_data->{username};
-
-            # Check if user has mark_as_sponsor permission
-            my $is_sponsor = $user_data->{mark_as_sponsor} || 0;
-
-            if ( $is_sponsor ) {
-                # Valid sponsor, set session
-                $c->user_session->{username} = $username;
-                $cache->remove($token);  # Remove token after use
-                # Continue with sponsor validation flow
-                return;
-            } else {
-                # User authenticated but is not a sponsor
-                $c->stash->{txt_auth_error} = "You do not have permission to sponsor a user.";
-                $cache->remove($token);
-            }
-        } else {
-            # Invalid or expired token
-            $c->stash->{txt_auth_error} = "SSO authentication failed or expired. Please try again.";
-        }
-    }
-
     if ( $c->has_errors ) {
         $c->stash->{txt_auth_error} = join(' ', grep { ref ($_) eq '' } @{$c->error});
         $c->clear_errors;
@@ -194,6 +163,38 @@ sub doSponsorRegistration : Private {
     my $sponsor_source_id = $activation_record->{source_id};
     my $profile = $c->profile;
     my $source = getAuthenticationSource($sponsor_source_id);
+
+    # Handle SSO callback with token
+    my $token = $request->param('token');
+    if ( $token && isenabled($Config{sponsor_login}{sso_status}) ) {
+        my $cache = pf::CHI->new(namespace => 'portalsponsor');
+        my $user_data = $cache->get($token);
+
+        if ( $user_data && ref($user_data) eq 'HASH' ) {
+            my $username = $user_data->{pid} || $user_data->{username};
+
+            # Check if user has mark_as_sponsor permission
+            my $is_sponsor = $user_data->{mark_as_sponsor} || 0;
+
+            if ( $is_sponsor ) {
+                # Valid sponsor, set session
+                $c->user_session->{username} = $username;
+                $cache->remove($token);  # Remove token after use
+                $logger->info("SSO authentication successful for sponsor: $username");
+                # Continue with sponsor validation flow
+            } else {
+                # User authenticated but is not a sponsor
+                $c->stash->{txt_auth_error} = "You do not have permission to sponsor a user.";
+                $cache->remove($token);
+                $c->detach('login');
+            }
+        } else {
+            # Invalid or expired token
+            $c->stash->{txt_auth_error} = "SSO authentication failed or expired. Please try again.";
+            $c->detach('login');
+        }
+    }
+
     if ($source) {
         if (isenabled($source->{validate_sponsor})) {
             # if we have a username in session it means user has already authenticated
