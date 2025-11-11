@@ -163,22 +163,14 @@ sub execute_actions {
     if ($self->app->isSponsorSSO) {
         get_logger->debug(sub { use Data::Dumper; "SponsorSSO mode - checking for mark_as_sponsor action. new_node_info: ".Dumper($self->new_node_info) });
         # Check if mark_as_sponsor action is present in the actions
-        my $has_sponsor_action = 0;
-        if (defined($self->actions) && ref($self->actions) eq 'ARRAY') {
-            foreach my $action (@{$self->actions}) {
-                if (ref($action) eq 'HASH' && $action->{type} && $action->{type} eq 'mark_as_sponsor') {
-                    $has_sponsor_action = 1;
-                    last;
-                }
-            }
-        }
-        if (!$has_sponsor_action) {
+        if (defined($self->new_node_info->{'mark_as_sponsor'}) && $self->new_node_info->{'mark_as_sponsor'} eq $TRUE) {
+            $self->app->session->{source} = $self->source;
+            return $TRUE;
+        } else {
             $self->app->flash->{error} = "Sponsor authentication requires mark_as_sponsor action";
             get_logger->warn("SponsorSSO authentication failed: mark_as_sponsor action not found");
             return $FALSE;
         }
-        $self->app->session->{source} = $self->source;
-        return $TRUE;
     }
     # For StatusSSO, check that authentication passed (verify category)
     if ($self->app->isStatusSSO) {
